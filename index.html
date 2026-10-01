@@ -776,88 +776,110 @@ function escapeHtml(text) {
 
 function apiGet(params) {
 
-  return new Promise(
-    function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
 
-      const callbackName =
-        "jsonp_" +
-        Date.now() +
-        "_" +
-        Math.floor(
-          Math.random() * 100000
+    const callbackName =
+      "jsonp_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 100000);
+
+    const script = document.createElement("script");
+
+    const query = new URLSearchParams(params);
+
+    query.set("callback", callbackName);
+
+    // Cache buster
+    query.set("_", Date.now());
+
+    script.src =
+      API_URL +
+      "?" +
+      query.toString();
+
+    script.async = true;
+
+    let finished = false;
+
+    // Callback dari Apps Script
+    window[callbackName] = function(data) {
+
+      if (finished) return;
+
+      finished = true;
+
+      clearTimeout(timeout);
+
+      delete window[callbackName];
+
+      script.remove();
+
+      if (!data) {
+        reject(
+          new Error("Server mengembalikan data kosong.")
         );
+        return;
+      }
 
-      const script =
-        document.createElement("script");
+      if (data.success === false) {
+        reject(
+          new Error(
+            data.message ||
+            "Terjadi kesalahan pada server."
+          )
+        );
+        return;
+      }
 
-      const query =
-        new URLSearchParams(params);
+      resolve(data);
+    };
 
-      query.set(
-        "callback",
-        callbackName
+
+    // Kalau script gagal dimuat
+    script.onerror = function() {
+
+      if (finished) return;
+
+      finished = true;
+
+      clearTimeout(timeout);
+
+      delete window[callbackName];
+
+      script.remove();
+
+      reject(
+        new Error(
+          "Apps Script tidak dapat diakses dari browser ini."
+        )
+      );
+    };
+
+
+    // Timeout 15 detik
+    const timeout = setTimeout(function() {
+
+      if (finished) return;
+
+      finished = true;
+
+      delete window[callbackName];
+
+      script.remove();
+
+      reject(
+        new Error(
+          "Waktu koneksi ke server habis (15 detik)."
+        )
       );
 
-      script.src =
-        API_URL +
-        "?" +
-        query.toString();
-
-      let finished = false;
-
-      window[callbackName] =
-        function(data) {
-
-          finished = true;
-
-          delete window[callbackName];
-
-          script.remove();
-
-          if (
-            data &&
-            data.success === false
-          ) {
-
-            reject(
-              new Error(
-                data.message ||
-                "Terjadi kesalahan."
-              )
-            );
-
-            return;
-          }
-
-          resolve(data);
-
-        };
+    }, 15000);
 
 
-      script.onerror =
-        function() {
+    document.body.appendChild(script);
 
-          if (finished) return;
-
-          delete window[callbackName];
-
-          script.remove();
-
-          reject(
-            new Error(
-              "Tidak dapat terhubung ke server."
-            )
-          );
-
-        };
-
-
-      document.body.appendChild(
-        script
-      );
-
-    }
-  );
+  });
 
 }
 
