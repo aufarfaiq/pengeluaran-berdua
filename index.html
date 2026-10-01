@@ -36,6 +36,7 @@
   <title>Pengeluaran Berdua</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -305,6 +306,7 @@
     }
 
     @media (max-width: 700px) {
+
       .container {
         width: calc(100% - 18px);
         padding-top: 18px;
@@ -325,9 +327,11 @@
       .card {
         padding: 15px;
       }
+
     }
 
     @media (max-width: 430px) {
+
       .summary {
         grid-template-columns: 1fr;
       }
@@ -335,383 +339,525 @@
       h1 {
         font-size: 23px;
       }
+
     }
+
   </style>
 </head>
 
+
 <body>
 
-<div class="topbar">
-  💰 Pengeluaran Berdua
-</div>
-
-<div class="container">
-
-  <h1>Pengeluaran Berdua</h1>
-
-  <div class="subtitle">
-    Catat pengeluaran per transaksi.
+  <div class="topbar">
+    💰 Pengeluaran Berdua
   </div>
 
-  <!-- TAMBAH -->
-  <div class="card">
 
-    <h2 class="card-title">
-      Tambah Pengeluaran
-    </h2>
+  <div class="container">
 
-    <form id="expenseForm">
+    <h1>Pengeluaran Berdua</h1>
+
+    <div class="subtitle">
+      Catat pengeluaran per transaksi.
+    </div>
+
+
+    <!-- TAMBAH -->
+
+    <div class="card">
+
+      <h2 class="card-title">
+        Tambah Pengeluaran
+      </h2>
+
+      <form id="expenseForm">
+
+        <div class="form-grid">
+
+          <div>
+            <label>Tanggal</label>
+
+            <input
+              type="date"
+              id="tanggal"
+              required
+            >
+          </div>
+
+
+          <div>
+
+            <label>Duit siapa?</label>
+
+            <select id="pemilik" required>
+
+              <option value="">
+                Pilih
+              </option>
+
+              <option value="Aufar">
+                Aufar
+              </option>
+
+              <option value="Mei">
+                Mei
+              </option>
+
+              <option value="Tabungan Berdua">
+                Tabungan Berdua
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label>Transaksi</label>
+
+            <select id="kategori" required>
+
+              <option value="">
+                Pilih
+              </option>
+
+              <option value="Makan">
+                Makan
+              </option>
+
+              <option value="Bensin">
+                Bensin
+              </option>
+
+              <option value="Gojek">
+                Gojek
+              </option>
+
+              <option value="Belanja">
+                Belanja
+              </option>
+
+              <option value="Lain-lain">
+                Lain-lain
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label>Nominal (Rp)</label>
+
+            <input
+              type="number"
+              id="nominal"
+              min="0"
+              step="1"
+              placeholder="Contoh: 50000"
+              required
+            >
+
+          </div>
+
+
+          <div class="full">
+
+            <label>
+              Catatan
+              <span style="font-weight:400;color:#888">
+                (opsional)
+              </span>
+            </label>
+
+            <textarea
+              id="catatan"
+              placeholder="Contoh: makan siang, bensin motor, dll."
+            ></textarea>
+
+          </div>
+
+
+          <div class="full">
+
+            <button
+              class="btn"
+              type="submit"
+              id="submitBtn"
+            >
+              Tambah Pengeluaran
+            </button>
+
+            <div
+              class="status"
+              id="status"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="card">
+
+      <h2 class="card-title">
+        Ringkasan Bulan Ini
+      </h2>
+
+      <div class="summary">
+
+        <div class="summary-box">
+
+          <small>
+            Total Pengeluaran
+          </small>
+
+          <strong id="totalBulan">
+            Rp0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+          <small>
+            Aufar
+          </small>
+
+          <strong id="totalAufar">
+            Rp0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+          <small>
+            Mei
+          </small>
+
+          <strong id="totalMei">
+            Rp0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-box">
+
+          <small>
+            Tabungan Berdua
+          </small>
+
+          <strong id="totalBerdua">
+            Rp0
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- RIWAYAT -->
+
+    <div class="card">
+
+      <h2 class="card-title">
+        Riwayat Pengeluaran
+      </h2>
+
+
+      <div class="filter-row">
+
+        <div class="filter-item">
+
+          <label>
+            Bulan
+          </label>
+
+          <input
+            type="month"
+            id="filterBulan"
+          >
+
+        </div>
+
+
+        <div class="filter-item">
+
+          <label>
+            Duit siapa?
+          </label>
+
+          <select id="filterPemilik">
+
+            <option value="">
+              Semua
+            </option>
+
+            <option value="Aufar">
+              Aufar
+            </option>
+
+            <option value="Mei">
+              Mei
+            </option>
+
+            <option value="Tabungan Berdua">
+              Tabungan Berdua
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <button
+          class="btn btn-secondary"
+          type="button"
+          onclick="resetFilter()"
+        >
+          Reset Filter
+        </button>
+
+      </div>
+
+
+      <div
+        id="tableStatus"
+        class="loading"
+      >
+        Memuat transaksi...
+      </div>
+
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Tanggal
+              </th>
+
+              <th>
+                Duit Siapa
+              </th>
+
+              <th>
+                Transaksi
+              </th>
+
+              <th>
+                Nominal
+              </th>
+
+              <th>
+                Catatan
+              </th>
+
+              <th>
+                Aksi
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="expenseTable"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- MODAL EDIT -->
+
+  <div
+    class="modal"
+    id="editModal"
+  >
+
+    <div class="modal-box">
+
+      <h2 class="card-title">
+        Edit Pengeluaran
+      </h2>
+
+
+      <input
+        type="hidden"
+        id="editRow"
+      >
+
 
       <div class="form-grid">
 
         <div>
-          <label>Tanggal</label>
+
+          <label>
+            Tanggal
+          </label>
+
           <input
             type="date"
-            id="tanggal"
+            id="editTanggal"
             required
           >
+
         </div>
 
-        <div>
-          <label>Duit siapa?</label>
 
-          <select id="pemilik" required>
-            <option value="">Pilih</option>
-            <option value="Aufar">Aufar</option>
-            <option value="Mei">Mei</option>
+        <div>
+
+          <label>
+            Duit siapa?
+          </label>
+
+          <select id="editPemilik">
+
+            <option value="Aufar">
+              Aufar
+            </option>
+
+            <option value="Mei">
+              Mei
+            </option>
+
             <option value="Tabungan Berdua">
               Tabungan Berdua
             </option>
+
           </select>
+
         </div>
 
-        <div>
-          <label>Transaksi</label>
 
-          <select id="kategori" required>
-            <option value="">Pilih</option>
-            <option value="Makan">Makan</option>
-            <option value="Bensin">Bensin</option>
-            <option value="Gojek">Gojek</option>
-            <option value="Belanja">Belanja</option>
-            <option value="Lain-lain">Lain-lain</option>
+        <div>
+
+          <label>
+            Transaksi
+          </label>
+
+          <select id="editKategori">
+
+            <option value="Makan">
+              Makan
+            </option>
+
+            <option value="Bensin">
+              Bensin
+            </option>
+
+            <option value="Gojek">
+              Gojek
+            </option>
+
+            <option value="Belanja">
+              Belanja
+            </option>
+
+            <option value="Lain-lain">
+              Lain-lain
+            </option>
+
           </select>
+
         </div>
 
+
         <div>
-          <label>Nominal (Rp)</label>
+
+          <label>
+            Nominal (Rp)
+          </label>
 
           <input
             type="number"
-            id="nominal"
+            id="editNominal"
             min="0"
             step="1"
-            placeholder="Contoh: 50000"
             required
           >
+
         </div>
 
+
         <div class="full">
+
           <label>
             Catatan
-            <span style="font-weight:400;color:#888">
-              (opsional)
-            </span>
           </label>
 
           <textarea
-            id="catatan"
-            placeholder="Contoh: makan siang, bensin motor, dll."
+            id="editCatatan"
           ></textarea>
-        </div>
-
-        <div class="full">
-
-          <button
-            class="btn"
-            type="submit"
-            id="submitBtn"
-          >
-            Tambah Pengeluaran
-          </button>
-
-          <div
-            class="status"
-            id="status"
-          ></div>
 
         </div>
 
       </div>
 
-    </form>
 
-  </div>
+      <div class="modal-actions">
 
-
-  <!-- SUMMARY -->
-  <div class="card">
-
-    <h2 class="card-title">
-      Ringkasan Bulan Ini
-    </h2>
-
-    <div class="summary">
-
-      <div class="summary-box">
-        <small>Total Pengeluaran</small>
-        <strong id="totalBulan">Rp0</strong>
-      </div>
-
-      <div class="summary-box">
-        <small>Aufar</small>
-        <strong id="totalAufar">Rp0</strong>
-      </div>
-
-      <div class="summary-box">
-        <small>Mei</small>
-        <strong id="totalMei">Rp0</strong>
-      </div>
-
-      <div class="summary-box">
-        <small>Tabungan Berdua</small>
-        <strong id="totalBerdua">Rp0</strong>
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- RIWAYAT -->
-  <div class="card">
-
-    <h2 class="card-title">
-      Riwayat Pengeluaran
-    </h2>
-
-    <div class="filter-row">
-
-      <div class="filter-item">
-
-        <label>Bulan</label>
-
-        <input
-          type="month"
-          id="filterBulan"
+        <button
+          class="btn btn-secondary"
+          onclick="closeEdit()"
+          type="button"
         >
+          Batal
+        </button>
+
+
+        <button
+          class="btn"
+          onclick="saveEdit()"
+          type="button"
+        >
+          Simpan Perubahan
+        </button>
 
       </div>
-
-      <div class="filter-item">
-
-        <label>Duit siapa?</label>
-
-        <select id="filterPemilik">
-
-          <option value="">
-            Semua
-          </option>
-
-          <option value="Aufar">
-            Aufar
-          </option>
-
-          <option value="Mei">
-            Mei
-          </option>
-
-          <option value="Tabungan Berdua">
-            Tabungan Berdua
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        class="btn btn-secondary"
-        type="button"
-        onclick="resetFilter()"
-      >
-        Reset Filter
-      </button>
-
-    </div>
-
-    <div
-      id="tableStatus"
-      class="loading"
-    >
-      Memuat transaksi...
-    </div>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Tanggal</th>
-            <th>Duit Siapa</th>
-            <th>Transaksi</th>
-            <th>Nominal</th>
-            <th>Catatan</th>
-            <th>Aksi</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="expenseTable"></tbody>
-
-      </table>
 
     </div>
 
   </div>
 
-</div>
-
-
-<!-- MODAL EDIT -->
-<div
-  class="modal"
-  id="editModal"
->
-
-  <div class="modal-box">
-
-    <h2 class="card-title">
-      Edit Pengeluaran
-    </h2>
-
-    <input
-      type="hidden"
-      id="editRow"
-    >
-
-    <div class="form-grid">
-
-      <div>
-        <label>Tanggal</label>
-
-        <input
-          type="date"
-          id="editTanggal"
-          required
-        >
-      </div>
-
-      <div>
-        <label>Duit siapa?</label>
-
-        <select id="editPemilik">
-
-          <option value="Aufar">
-            Aufar
-          </option>
-
-          <option value="Mei">
-            Mei
-          </option>
-
-          <option value="Tabungan Berdua">
-            Tabungan Berdua
-          </option>
-
-        </select>
-
-      </div>
-
-      <div>
-        <label>Transaksi</label>
-
-        <select id="editKategori">
-
-          <option value="Makan">
-            Makan
-          </option>
-
-          <option value="Bensin">
-            Bensin
-          </option>
-
-          <option value="Gojek">
-            Gojek
-          </option>
-
-          <option value="Belanja">
-            Belanja
-          </option>
-
-          <option value="Lain-lain">
-            Lain-lain
-          </option>
-
-        </select>
-
-      </div>
-
-      <div>
-        <label>Nominal (Rp)</label>
-
-        <input
-          type="number"
-          id="editNominal"
-          min="0"
-          step="1"
-          required
-        >
-      </div>
-
-      <div class="full">
-
-        <label>Catatan</label>
-
-        <textarea
-          id="editCatatan"
-        ></textarea>
-
-      </div>
-
-    </div>
-
-    <div
-      class="modal-actions"
-    >
-
-      <button
-        class="btn btn-secondary"
-        onclick="closeEdit()"
-        type="button"
-      >
-        Batal
-      </button>
-
-      <button
-        class="btn"
-        onclick="saveEdit()"
-        type="button"
-      >
-        Simpan Perubahan
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
 
 
 <script>
+
+
+/* =========================
+   API URL
+========================= */
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbwXiJMBpKx_JV52PaYKhgMH4oBKXkj1TuuATHig7_Xl7miLJH8RvmLOObxSYX2qRkg5/exec";
 
 
 let allExpenses = [];
+
 
 
 /* =========================
@@ -731,6 +877,7 @@ function todayLocal() {
   return local
     .toISOString()
     .slice(0, 10);
+
 }
 
 
@@ -770,123 +917,88 @@ function escapeHtml(text) {
 }
 
 
+
 /* =========================
    API
+   GitHub Pages -> Apps Script
 ========================= */
 
 function apiGet(params) {
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(
+    async function(resolve, reject) {
 
-    const callbackName =
-      "jsonp_" +
-      Date.now() +
-      "_" +
-      Math.floor(Math.random() * 100000);
+      try {
 
-    const script =
-      document.createElement("script");
+        const query =
+          new URLSearchParams(params);
 
-    const query =
-      new URLSearchParams(params);
+        query.set(
+          "_",
+          Date.now()
+        );
 
-    query.set("callback", callbackName);
-    query.set("_", Date.now());
 
-    const url =
-      API_URL +
-      "?" +
-      query.toString();
+        const response =
+          await fetch(
+            API_URL +
+            "?" +
+            query.toString(),
+            {
+              method: "GET",
+              cache: "no-store"
+            }
+          );
 
-    let finished = false;
 
-    let timeout;
+        if (!response.ok) {
 
-    function cleanup() {
+          throw new Error(
+            "Server mengembalikan HTTP " +
+            response.status
+          );
 
-      if (finished) return;
+        }
 
-      finished = true;
 
-      clearTimeout(timeout);
+        const data =
+          await response.json();
 
-      delete window[callbackName];
 
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+        if (!data) {
+
+          throw new Error(
+            "Server mengembalikan data kosong."
+          );
+
+        }
+
+
+        if (
+          data.success === false
+        ) {
+
+          throw new Error(
+            data.message ||
+            "Terjadi kesalahan pada server."
+          );
+
+        }
+
+
+        resolve(data);
+
+      } catch (error) {
+
+        reject(error);
+
       }
 
     }
-
-    window[callbackName] = function(data) {
-
-      if (finished) return;
-
-      cleanup();
-
-      if (!data) {
-
-        reject(
-          new Error(
-            "Server mengembalikan data kosong."
-          )
-        );
-
-        return;
-      }
-
-      if (data.success === false) {
-
-        reject(
-          new Error(
-            data.message ||
-            "Terjadi kesalahan pada server."
-          )
-        );
-
-        return;
-      }
-
-      resolve(data);
-
-    };
-
-
-    script.onerror = function() {
-
-      cleanup();
-
-      reject(
-        new Error(
-          "Chrome tidak dapat mengakses Google Apps Script."
-        )
-      );
-
-    };
-
-
-    timeout = setTimeout(function() {
-
-      cleanup();
-
-      reject(
-        new Error(
-          "Koneksi ke server timeout."
-        )
-      );
-
-    }, 15000);
-
-
-    script.src = url;
-
-    script.async = true;
-
-    document.body.appendChild(script);
-
-  });
+  );
 
 }
+
 
 
 /* =========================
@@ -897,9 +1009,11 @@ document
   .getElementById("tanggal")
   .value = todayLocal();
 
+
 document
   .getElementById("filterBulan")
   .value = currentMonth();
+
 
 
 /* =========================
@@ -914,15 +1028,18 @@ document
 
       e.preventDefault();
 
+
       const btn =
         document.getElementById(
           "submitBtn"
         );
 
+
       const status =
         document.getElementById(
           "status"
         );
+
 
       const data = {
 
@@ -970,6 +1087,7 @@ document
         const result =
           await apiGet(data);
 
+
         status.className =
           "status success";
 
@@ -984,6 +1102,7 @@ document
           )
           .reset();
 
+
         document
           .getElementById(
             "tanggal"
@@ -992,6 +1111,7 @@ document
 
 
         await loadExpenses();
+
 
       } catch (error) {
 
@@ -1002,6 +1122,7 @@ document
           "Gagal menyimpan: " +
           error.message;
 
+
       } finally {
 
         btn.disabled = false;
@@ -1010,6 +1131,7 @@ document
 
     }
   );
+
 
 
 /* =========================
@@ -1023,6 +1145,7 @@ async function loadExpenses() {
       "tableStatus"
     );
 
+
   tableStatus.textContent =
     "Memuat transaksi...";
 
@@ -1034,10 +1157,13 @@ async function loadExpenses() {
         action: "list"
       });
 
+
     allExpenses =
       result.data || [];
 
+
     renderExpenses();
+
 
   } catch (error) {
 
@@ -1050,6 +1176,7 @@ async function loadExpenses() {
 }
 
 
+
 /* =========================
    RENDER
 ========================= */
@@ -1060,6 +1187,7 @@ function renderExpenses() {
     document.getElementById(
       "filterBulan"
     ).value;
+
 
   const owner =
     document.getElementById(
@@ -1077,9 +1205,11 @@ function renderExpenses() {
             month
           );
 
+
         const ownerMatch =
           !owner ||
           item.pemilik === owner;
+
 
         return (
           monthMatch &&
@@ -1102,7 +1232,9 @@ function renderExpenses() {
       const nominal =
         Number(item.nominal) || 0;
 
+
       total += nominal;
+
 
       if (
         item.pemilik === "Aufar"
@@ -1110,11 +1242,13 @@ function renderExpenses() {
         aufar += nominal;
       }
 
+
       if (
         item.pemilik === "Mei"
       ) {
         mei += nominal;
       }
+
 
       if (
         item.pemilik ===
@@ -1134,6 +1268,7 @@ function renderExpenses() {
     .textContent =
     rupiah(total);
 
+
   document
     .getElementById(
       "totalAufar"
@@ -1141,12 +1276,14 @@ function renderExpenses() {
     .textContent =
     rupiah(aufar);
 
+
   document
     .getElementById(
       "totalMei"
     )
     .textContent =
     rupiah(mei);
+
 
   document
     .getElementById(
@@ -1164,14 +1301,14 @@ function renderExpenses() {
 
   if (!filtered.length) {
 
-    tbody.innerHTML =
-      `
+    tbody.innerHTML = `
       <tr>
         <td colspan="6" class="empty">
           Belum ada transaksi.
         </td>
       </tr>
-      `;
+    `;
+
 
     document
       .getElementById(
@@ -1179,6 +1316,7 @@ function renderExpenses() {
       )
       .textContent =
       "0 transaksi";
+
 
     return;
 
@@ -1192,6 +1330,7 @@ function renderExpenses() {
 
           const parts =
             item.tanggal.split("-");
+
 
           const displayDate =
             parts.length === 3
@@ -1252,22 +1391,21 @@ function renderExpenses() {
       .join("");
 
 
-  tbody.innerHTML +=
-    `
-      <tr class="total-row">
+  tbody.innerHTML += `
+    <tr class="total-row">
 
-        <td colspan="3">
-          TOTAL PENGELUARAN
-        </td>
+      <td colspan="3">
+        TOTAL PENGELUARAN
+      </td>
 
-        <td class="nominal">
-          ${rupiah(total)}
-        </td>
+      <td class="nominal">
+        ${rupiah(total)}
+      </td>
 
-        <td colspan="2"></td>
+      <td colspan="2"></td>
 
-      </tr>
-    `;
+    </tr>
+  `;
 
 
   document
@@ -1279,6 +1417,7 @@ function renderExpenses() {
     " transaksi";
 
 }
+
 
 
 /* =========================
@@ -1312,11 +1451,13 @@ function openEdit(row) {
     )
     .value = item.row;
 
+
   document
     .getElementById(
       "editTanggal"
     )
     .value = item.tanggal;
+
 
   document
     .getElementById(
@@ -1324,17 +1465,20 @@ function openEdit(row) {
     )
     .value = item.pemilik;
 
+
   document
     .getElementById(
       "editKategori"
     )
     .value = item.kategori;
 
+
   document
     .getElementById(
       "editNominal"
     )
     .value = item.nominal;
+
 
   document
     .getElementById(
@@ -1354,6 +1498,7 @@ function openEdit(row) {
 }
 
 
+
 function closeEdit() {
 
   document
@@ -1365,6 +1510,7 @@ function closeEdit() {
     );
 
 }
+
 
 
 async function saveEdit() {
@@ -1410,13 +1556,17 @@ async function saveEdit() {
 
     await apiGet(data);
 
+
     closeEdit();
 
+
     await loadExpenses();
+
 
     alert(
       "Pengeluaran berhasil diperbarui."
     );
+
 
   } catch (error) {
 
@@ -1428,6 +1578,7 @@ async function saveEdit() {
   }
 
 }
+
 
 
 /* =========================
@@ -1452,7 +1603,9 @@ async function deleteExpense(row) {
       row: row
     });
 
+
     await loadExpenses();
+
 
   } catch (error) {
 
@@ -1464,6 +1617,7 @@ async function deleteExpense(row) {
   }
 
 }
+
 
 
 /* =========================
@@ -1499,15 +1653,18 @@ function resetFilter() {
     .value =
     currentMonth();
 
+
   document
     .getElementById(
       "filterPemilik"
     )
     .value = "";
 
+
   renderExpenses();
 
 }
+
 
 
 /* =========================
@@ -1515,6 +1672,7 @@ function resetFilter() {
 ========================= */
 
 loadExpenses();
+
 
 
 /* =========================
@@ -1536,10 +1694,12 @@ if (
         )
         .catch(
           function(error) {
+
             console.log(
               "Service Worker:",
               error
             );
+
           }
         );
 
