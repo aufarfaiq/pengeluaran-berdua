@@ -771,7 +771,7 @@ function escapeHtml(text) {
 
 
 /* =========================
-   JSONP API
+   API
 ========================= */
 
 function apiGet(params) {
@@ -784,26 +784,25 @@ function apiGet(params) {
       "_" +
       Math.floor(Math.random() * 100000);
 
-    const script = document.createElement("script");
+    const script =
+      document.createElement("script");
 
-    const query = new URLSearchParams(params);
+    const query =
+      new URLSearchParams(params);
 
     query.set("callback", callbackName);
-
-    // Cache buster
     query.set("_", Date.now());
 
-    script.src =
+    const url =
       API_URL +
       "?" +
       query.toString();
 
-    script.async = true;
-
     let finished = false;
 
-    // Callback dari Apps Script
-    window[callbackName] = function(data) {
+    let timeout;
+
+    function cleanup() {
 
       if (finished) return;
 
@@ -813,69 +812,75 @@ function apiGet(params) {
 
       delete window[callbackName];
 
-      script.remove();
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
+    }
+
+    window[callbackName] = function(data) {
+
+      if (finished) return;
+
+      cleanup();
 
       if (!data) {
+
         reject(
-          new Error("Server mengembalikan data kosong.")
+          new Error(
+            "Server mengembalikan data kosong."
+          )
         );
+
         return;
       }
 
       if (data.success === false) {
+
         reject(
           new Error(
             data.message ||
             "Terjadi kesalahan pada server."
           )
         );
+
         return;
       }
 
       resolve(data);
+
     };
 
 
-    // Kalau script gagal dimuat
     script.onerror = function() {
 
-      if (finished) return;
-
-      finished = true;
-
-      clearTimeout(timeout);
-
-      delete window[callbackName];
-
-      script.remove();
+      cleanup();
 
       reject(
         new Error(
-          "Apps Script tidak dapat diakses dari browser ini."
+          "Chrome tidak dapat mengakses Google Apps Script."
         )
       );
+
     };
 
 
-    // Timeout 15 detik
-    const timeout = setTimeout(function() {
+    timeout = setTimeout(function() {
 
-      if (finished) return;
-
-      finished = true;
-
-      delete window[callbackName];
-
-      script.remove();
+      cleanup();
 
       reject(
         new Error(
-          "Waktu koneksi ke server habis (15 detik)."
+          "Koneksi ke server timeout."
         )
       );
 
     }, 15000);
 
+
+    script.src = url;
+
+    script.async = true;
 
     document.body.appendChild(script);
 
