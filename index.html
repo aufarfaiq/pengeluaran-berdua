@@ -3,62 +3,1139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
   <meta name="theme-color" content="#111827">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Pengeluaran Berdua">
   <meta name="mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+
   <title>Pengeluaran Berdua</title>
+
   <style>
-    *{box-sizing:border-box}
-    html,body{margin:0;width:100%;height:100%;background:#111827}
-    body{font-family:Arial,Helvetica,sans-serif;overflow:hidden}
-    .app{height:100%;height:100dvh;display:flex;flex-direction:column}
-    header{height:54px;display:flex;align-items:center;padding:0 16px;background:#111827;color:#fff;font-weight:700;flex:0 0 auto;padding-top:env(safe-area-inset-top)}
-    .title{font-size:16px}
-    .status{margin-left:auto;font-size:11px;font-weight:400;opacity:.75}
-    iframe{border:0;width:100%;height:calc(100% - 54px);background:#f5f6f8;flex:1}
-    .fallback{position:fixed;inset:0;background:#fff;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;color:#333}
-    .fallback button{margin-top:14px;padding:12px 18px;border:0;border-radius:10px;background:#111827;color:#fff;font-weight:700}
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f5f6f8;
+      color: #111827;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .app {
+      min-height: 100dvh;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        16px
+        14px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      opacity: .7;
+      margin-top: 4px;
+    }
+
+    .container {
+      width: min(900px, calc(100% - 20px));
+      margin: auto;
+      padding: 15px 0 30px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.035);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d5d9df;
+      border-radius: 9px;
+      background: white;
+      font: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #111827;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 15px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    .status {
+      margin-top: 9px;
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    .success {
+      color: #16805c;
+    }
+
+    .error {
+      color: #b42318;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .summary-box {
+      border: 1px solid #e3e5e8;
+      background: #fafafa;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .summary-box small {
+      display: block;
+      color: #6b7280;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+
+    .summary-box strong {
+      font-size: 16px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+      border: 1px solid #e2e5e8;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e8eaed;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #fafafa;
+      font-weight: 700;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fcfcfc;
+    }
+
+    .nominal {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .action {
+      white-space: nowrap;
+    }
+
+    .edit-btn {
+      background: transparent;
+      color: #2563eb;
+      padding: 4px 5px;
+    }
+
+    .delete-btn {
+      background: transparent;
+      color: #dc2626;
+      padding: 4px 5px;
+    }
+
+    .total-row td {
+      background: #f3f4f6;
+      font-weight: 700;
+    }
+
+    .loading,
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 18px;
+    }
+
+    .install-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      .summary {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        width: calc(100% - 16px);
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header>
+
+<div class="app">
+
+  <header>
+    <div class="header-inner">
       <div class="title">💰 Pengeluaran Berdua</div>
-      <div class="status" id="status">Memuat...</div>
-    </header>
-    <iframe
-      id="appFrame"
-      src="https://script.google.com/macros/s/AKfycbyRRasTbhcWRu9pimhwAdjVsBcj7bz58j7poSOfoN2G_5_ADC6Pa9-D40XHPmqmsCvRFQ/exec"
-      title="Pengeluaran Berdua"
-      allow="fullscreen"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
-  </div>
-
-  <div class="fallback" id="fallback">
-    <div>
-      <h2>Tidak dapat membuka aplikasi</h2>
-      <p>Periksa koneksi internet lalu coba lagi.</p>
-      <button onclick="location.reload()">Coba Lagi</button>
+      <div class="subtitle">Catat pengeluaran bersama</div>
     </div>
-  </div>
+  </header>
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  <main class="container">
+
+    <!-- FORM -->
+    <div class="card">
+
+      <h2 id="formTitle">Tambah Pengeluaran</h2>
+
+      <form id="expenseForm">
+
+        <div class="form-grid">
+
+          <div>
+            <label for="tanggal">Tanggal</label>
+            <input type="date" id="tanggal" required>
+          </div>
+
+          <div>
+            <label for="pemilik">Duit siapa?</label>
+            <select id="pemilik" required>
+              <option value="">Pilih</option>
+              <option value="Aufar">Aufar</option>
+              <option value="Mei">Mei</option>
+              <option value="Tabungan Berdua">Tabungan Berdua</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="kategori">Transaksi</label>
+            <select id="kategori" required>
+              <option value="">Pilih</option>
+              <option value="Makan">Makan</option>
+              <option value="Bensin">Bensin</option>
+              <option value="Gojek">Gojek</option>
+              <option value="Belanja">Belanja</option>
+              <option value="Lain-lain">Lain-lain</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="nominal">Nominal (Rp)</label>
+            <input
+              type="number"
+              id="nominal"
+              min="0"
+              step="1"
+              placeholder="Contoh: 50000"
+              required
+            >
+          </div>
+
+          <div class="full">
+            <label for="catatan">
+              Catatan
+              <span style="font-weight:400;color:#888">(opsional)</span>
+            </label>
+
+            <textarea
+              id="catatan"
+              placeholder="Contoh: makan siang, bensin motor, dll."
+            ></textarea>
+          </div>
+
+          <div class="full">
+
+            <div class="buttons">
+
+              <button
+                type="submit"
+                class="btn-primary"
+                id="submitBtn">
+                Tambah Pengeluaran
+              </button>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                id="cancelBtn"
+                style="display:none">
+                Batal Edit
+              </button>
+
+            </div>
+
+            <div id="formStatus" class="status"></div>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+    <div class="card">
+
+      <h2>Ringkasan Bulan Ini</h2>
+
+      <div class="summary">
+
+        <div class="summary-box">
+          <small>Total Pengeluaran</small>
+          <strong id="totalBulan">Rp0</strong>
+        </div>
+
+        <div class="summary-box">
+          <small>Aufar</small>
+          <strong id="totalAufar">Rp0</strong>
+        </div>
+
+        <div class="summary-box">
+          <small>Mei</small>
+          <strong id="totalMei">Rp0</strong>
+        </div>
+
+        <div class="summary-box">
+          <small>Tabungan Berdua</small>
+          <strong id="totalBerdua">Rp0</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- RIWAYAT -->
+    <div class="card">
+
+      <h2>Riwayat Pengeluaran</h2>
+
+      <div class="filters">
+
+        <div>
+          <label for="filterBulan">Bulan</label>
+          <input type="month" id="filterBulan">
+        </div>
+
+        <div>
+          <label for="filterPemilik">Duit siapa?</label>
+          <select id="filterPemilik">
+            <option value="">Semua</option>
+            <option value="Aufar">Aufar</option>
+            <option value="Mei">Mei</option>
+            <option value="Tabungan Berdua">Tabungan Berdua</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          onclick="resetFilter()">
+          Reset
+        </button>
+
+      </div>
+
+      <div id="tableStatus" class="loading">
+        Memuat transaksi...
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Duit Siapa</th>
+              <th>Transaksi</th>
+              <th>Nominal</th>
+              <th>Catatan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+
+          <tbody id="expenseTable"></tbody>
+
+        </table>
+
+      </div>
+
+      <div class="install-note">
+        💡 Kamu bisa menambahkan aplikasi ini ke layar utama HP.
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+  /*
+   * URL GOOGLE APPS SCRIPT
+   *
+   * Ini adalah URL Web App kamu.
+   */
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbyRRasTbhcWRu9pimhwAdjVsBcj7bz58j7poSOfoN2G_5_ADC6Pa9-D40XHPmqmsCvRFQ/exec";
+
+
+  let allExpenses = [];
+  let editRow = null;
+
+
+  // =========================
+  // UTILITAS
+  // =========================
+
+  function todayLocal() {
+
+    const now = new Date();
+
+    const local =
+      new Date(
+        now.getTime() -
+        now.getTimezoneOffset() * 60000
+      );
+
+    return local.toISOString().slice(0, 10);
+  }
+
+
+  function currentMonth() {
+    return todayLocal().slice(0, 7);
+  }
+
+
+  function rupiah(value) {
+
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(Number(value) || 0);
+
+  }
+
+
+  function escapeHtml(text) {
+
+    return String(text ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  // =========================
+  // JSONP
+  // =========================
+
+  function api(action, params = {}) {
+
+    return new Promise((resolve, reject) => {
+
+      const callbackName =
+        "jsonp_" +
+        Date.now() +
+        "_" +
+        Math.floor(Math.random() * 100000);
+
+      const script = document.createElement("script");
+
+      const query = new URLSearchParams();
+
+      query.set("action", action);
+      query.set("callback", callbackName);
+
+      Object.keys(params).forEach(key => {
+
+        query.set(
+          key,
+          params[key] == null ? "" : params[key]
+        );
+
+      });
+
+
+      window[callbackName] = function(result) {
+
+        delete window[callbackName];
+
+        script.remove();
+
+        if (result && result.success === false) {
+          reject(
+            new Error(result.message || "Terjadi kesalahan.")
+          );
+          return;
+        }
+
+        resolve(result);
+
+      };
+
+
+      script.onerror = function() {
+
+        delete window[callbackName];
+
+        script.remove();
+
+        reject(
+          new Error(
+            "Tidak dapat terhubung ke Google Apps Script."
+          )
+        );
+
+      };
+
+
+      script.src =
+        API_URL +
+        "?" +
+        query.toString();
+
+      document.body.appendChild(script);
+
+    });
+
+  }
+
+
+  // =========================
+  // INIT
+  // =========================
+
+  document.getElementById("tanggal").value =
+    todayLocal();
+
+  document.getElementById("filterBulan").value =
+    currentMonth();
+
+
+  // =========================
+  // LOAD DATA
+  // =========================
+
+  async function loadExpenses() {
+
+    document.getElementById("tableStatus").textContent =
+      "Memuat transaksi...";
+
+    try {
+
+      const result = await api("list");
+
+      allExpenses = result.data || [];
+
+      renderExpenses();
+
+    } catch (error) {
+
+      document.getElementById("tableStatus").textContent =
+        "Gagal memuat data: " + error.message;
+
     }
-    const frame = document.getElementById("appFrame");
-    const status = document.getElementById("status");
-    frame.addEventListener("load", () => status.textContent = "Siap");
-    setTimeout(() => {
-      if (status.textContent === "Memuat...") {
-        status.textContent = "Online";
+
+  }
+
+
+  // =========================
+  // SUBMIT
+  // =========================
+
+  document
+    .getElementById("expenseForm")
+    .addEventListener("submit", async function(e) {
+
+      e.preventDefault();
+
+      const btn =
+        document.getElementById("submitBtn");
+
+      const status =
+        document.getElementById("formStatus");
+
+
+      const data = {
+
+        tanggal:
+          document.getElementById("tanggal").value,
+
+        pemilik:
+          document.getElementById("pemilik").value,
+
+        kategori:
+          document.getElementById("kategori").value,
+
+        nominal:
+          document.getElementById("nominal").value,
+
+        catatan:
+          document.getElementById("catatan").value.trim()
+
+      };
+
+
+      btn.disabled = true;
+
+      status.className = "status";
+
+      status.textContent =
+        editRow
+          ? "Menyimpan perubahan..."
+          : "Menyimpan...";
+
+
+      try {
+
+        if (editRow) {
+
+          await api("edit", {
+            row: editRow,
+            tanggal: data.tanggal,
+            pemilik: data.pemilik,
+            kategori: data.kategori,
+            nominal: data.nominal,
+            catatan: data.catatan
+          });
+
+          status.className =
+            "status success";
+
+          status.textContent =
+            "✓ Pengeluaran berhasil diubah.";
+
+        } else {
+
+          await api("save", data);
+
+          status.className =
+            "status success";
+
+          status.textContent =
+            "✓ Pengeluaran berhasil disimpan.";
+
+        }
+
+
+        resetForm();
+
+        await loadExpenses();
+
+
+      } catch (error) {
+
+        status.className =
+          "status error";
+
+        status.textContent =
+          "Gagal: " + error.message;
+
       }
-    }, 4000);
-  </script>
+
+
+      btn.disabled = false;
+
+    });
+
+
+  // =========================
+  // RENDER
+  // =========================
+
+  function renderExpenses() {
+
+    const month =
+      document.getElementById("filterBulan").value;
+
+    const owner =
+      document.getElementById("filterPemilik").value;
+
+
+    const filtered =
+      allExpenses.filter(item => {
+
+        const monthMatch =
+          !month ||
+          item.tanggal.startsWith(month);
+
+        const ownerMatch =
+          !owner ||
+          item.pemilik === owner;
+
+        return monthMatch && ownerMatch;
+
+      });
+
+
+    let total = 0;
+    let aufar = 0;
+    let mei = 0;
+    let berdua = 0;
+
+
+    filtered.forEach(item => {
+
+      const nominal =
+        Number(item.nominal) || 0;
+
+      total += nominal;
+
+      if (item.pemilik === "Aufar") {
+        aufar += nominal;
+      }
+
+      if (item.pemilik === "Mei") {
+        mei += nominal;
+      }
+
+      if (item.pemilik === "Tabungan Berdua") {
+        berdua += nominal;
+      }
+
+    });
+
+
+    document.getElementById("totalBulan").textContent =
+      rupiah(total);
+
+    document.getElementById("totalAufar").textContent =
+      rupiah(aufar);
+
+    document.getElementById("totalMei").textContent =
+      rupiah(mei);
+
+    document.getElementById("totalBerdua").textContent =
+      rupiah(berdua);
+
+
+    const tbody =
+      document.getElementById("expenseTable");
+
+
+    if (!filtered.length) {
+
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="empty">Belum ada transaksi.</td></tr>';
+
+      document.getElementById("tableStatus").textContent =
+        "0 transaksi";
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      filtered.map(item => {
+
+        const parts =
+          item.tanggal.split("-");
+
+        const displayDate =
+          parts.length === 3
+            ? parts[2] + "/" + parts[1] + "/" + parts[0]
+            : item.tanggal;
+
+
+        return `
+          <tr>
+
+            <td>${escapeHtml(displayDate)}</td>
+
+            <td>${escapeHtml(item.pemilik)}</td>
+
+            <td>${escapeHtml(item.kategori)}</td>
+
+            <td class="nominal">
+              ${rupiah(item.nominal)}
+            </td>
+
+            <td>
+              ${escapeHtml(item.catatan)}
+            </td>
+
+            <td class="action">
+
+              <button
+                class="edit-btn"
+                onclick="editExpense(${item.row})">
+                Edit
+              </button>
+
+              <button
+                class="delete-btn"
+                onclick="deleteExpense(${item.row})">
+                Hapus
+              </button>
+
+            </td>
+
+          </tr>
+        `;
+
+      }).join("");
+
+
+    tbody.innerHTML += `
+      <tr class="total-row">
+
+        <td colspan="3">
+          TOTAL PENGELUARAN
+        </td>
+
+        <td class="nominal">
+          ${rupiah(total)}
+        </td>
+
+        <td colspan="2"></td>
+
+      </tr>
+    `;
+
+
+    document.getElementById("tableStatus").textContent =
+      filtered.length + " transaksi";
+
+  }
+
+
+  // =========================
+  // EDIT
+  // =========================
+
+  function editExpense(row) {
+
+    const item =
+      allExpenses.find(
+        x => Number(x.row) === Number(row)
+      );
+
+
+    if (!item) {
+
+      alert("Data transaksi tidak ditemukan.");
+
+      return;
+
+    }
+
+
+    editRow = Number(row);
+
+
+    document.getElementById("formTitle").textContent =
+      "Edit Pengeluaran";
+
+    document.getElementById("submitBtn").textContent =
+      "Simpan Perubahan";
+
+    document.getElementById("cancelBtn").style.display =
+      "inline-block";
+
+
+    document.getElementById("tanggal").value =
+      item.tanggal;
+
+    document.getElementById("pemilik").value =
+      item.pemilik;
+
+    document.getElementById("kategori").value =
+      item.kategori;
+
+    document.getElementById("nominal").value =
+      item.nominal;
+
+    document.getElementById("catatan").value =
+      item.catatan || "";
+
+
+    document.getElementById("formStatus").textContent =
+      "Sedang mengedit transaksi.";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  // =========================
+  // CANCEL EDIT
+  // =========================
+
+  document
+    .getElementById("cancelBtn")
+    .addEventListener("click", resetForm);
+
+
+  function resetForm() {
+
+    editRow = null;
+
+
+    document.getElementById("expenseForm").reset();
+
+    document.getElementById("tanggal").value =
+      todayLocal();
+
+
+    document.getElementById("formTitle").textContent =
+      "Tambah Pengeluaran";
+
+    document.getElementById("submitBtn").textContent =
+      "Tambah Pengeluaran";
+
+    document.getElementById("cancelBtn").style.display =
+      "none";
+
+    document.getElementById("formStatus").textContent =
+      "";
+
+  }
+
+
+  // =========================
+  // DELETE
+  // =========================
+
+  async function deleteExpense(row) {
+
+    if (!confirm("Hapus transaksi ini?")) {
+      return;
+    }
+
+
+    document.getElementById("tableStatus").textContent =
+      "Menghapus...";
+
+
+    try {
+
+      await api("delete", {
+        row: row
+      });
+
+
+      await loadExpenses();
+
+
+    } catch (error) {
+
+      alert(
+        "Gagal menghapus: " +
+        error.message
+      );
+
+      loadExpenses();
+
+    }
+
+  }
+
+
+  // =========================
+  // FILTER
+  // =========================
+
+  document
+    .getElementById("filterBulan")
+    .addEventListener(
+      "change",
+      renderExpenses
+    );
+
+
+  document
+    .getElementById("filterPemilik")
+    .addEventListener(
+      "change",
+      renderExpenses
+    );
+
+
+  function resetFilter() {
+
+    document.getElementById("filterBulan").value =
+      currentMonth();
+
+    document.getElementById("filterPemilik").value =
+      "";
+
+    renderExpenses();
+
+  }
+
+
+  // =========================
+  // SERVICE WORKER
+  // =========================
+
+  if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+      "load",
+      () => {
+
+        navigator.serviceWorker
+          .register("./sw.js")
+          .catch(() => {});
+
+      }
+    );
+
+  }
+
+
+  // LOAD AWAL
+
+  loadExpenses();
+
+</script>
+
 </body>
 </html>
