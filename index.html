@@ -243,6 +243,24 @@
     th {
       background: #fafafa;
       font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .sort-btn {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .sort-btn:focus-visible {
+      outline: 2px solid #175cd3;
+      outline-offset: 3px;
+      border-radius: 3px;
     }
 
     tbody tr:nth-child(even) {
@@ -422,25 +440,13 @@
                 Pilih
               </option>
 
-              <option value="Makan">
-                Makan
-              </option>
-
-              <option value="Bensin">
-                Bensin
-              </option>
-
-              <option value="Gojek">
-                Gojek
-              </option>
-
-              <option value="Belanja">
-                Belanja
-              </option>
-
-              <option value="Lain-lain">
-                Lain-lain
-              </option>
+              <option value="Makan">Makan</option>
+              <option value="Jajan">Jajan</option>
+              <option value="Belanja">Belanja</option>
+              <option value="Bensin">Bensin</option>
+              <option value="Gojek">Gojek</option>
+              <option value="Tarik Tunai">Tarik Tunai</option>
+              <option value="Lainnya">Lainnya</option>
 
             </select>
 
@@ -454,6 +460,8 @@
             <input
               type="number"
               id="nominal"
+              inputmode="numeric"
+              pattern="[0-9]*"
               min="0"
               step="1"
               placeholder="Contoh: 50000"
@@ -651,29 +659,12 @@
 
             <tr>
 
-              <th>
-                Tanggal
-              </th>
-
-              <th>
-                Duit Siapa
-              </th>
-
-              <th>
-                Transaksi
-              </th>
-
-              <th>
-                Nominal
-              </th>
-
-              <th>
-                Catatan
-              </th>
-
-              <th>
-                Aksi
-              </th>
+              <th><button class="sort-btn" type="button" data-sort="tanggal">Tanggal <span id="sort-tanggal">↕</span></button></th>
+              <th><button class="sort-btn" type="button" data-sort="pemilik">Duit Siapa <span id="sort-pemilik">↕</span></button></th>
+              <th><button class="sort-btn" type="button" data-sort="kategori">Transaksi <span id="sort-kategori">↕</span></button></th>
+              <th><button class="sort-btn" type="button" data-sort="nominal">Nominal <span id="sort-nominal">↕</span></button></th>
+              <th><button class="sort-btn" type="button" data-sort="catatan">Catatan <span id="sort-catatan">↕</span></button></th>
+              <th>Aksi</th>
 
             </tr>
 
@@ -761,25 +752,14 @@
 
           <select id="editKategori">
 
-            <option value="Makan">
-              Makan
-            </option>
-
-            <option value="Bensin">
-              Bensin
-            </option>
-
-            <option value="Gojek">
-              Gojek
-            </option>
-
-            <option value="Belanja">
-              Belanja
-            </option>
-
-            <option value="Lain-lain">
-              Lain-lain
-            </option>
+            <option value="Makan">Makan</option>
+            <option value="Jajan">Jajan</option>
+            <option value="Belanja">Belanja</option>
+            <option value="Bensin">Bensin</option>
+            <option value="Gojek">Gojek</option>
+            <option value="Tarik Tunai">Tarik Tunai</option>
+            <option value="Lainnya">Lainnya</option>
+            <option value="Lain-lain">Lain-lain (data lama)</option>
 
           </select>
 
@@ -795,6 +775,8 @@
           <input
             type="number"
             id="editNominal"
+            inputmode="numeric"
+            pattern="[0-9]*"
             min="0"
             step="1"
             required
@@ -857,8 +839,8 @@ const API_URL =
 
 
 let allExpenses = [];
-
-
+let sortKey = "tanggal";
+let sortDirection = "desc"; // tanggal terbaru dulu
 
 /* =========================
    UTIL
@@ -1201,24 +1183,42 @@ function renderExpenses() {
 
         const monthMatch =
           !month ||
-          item.tanggal.startsWith(
-            month
-          );
-
+          item.tanggal.startsWith(month);
 
         const ownerMatch =
           !owner ||
           item.pemilik === owner;
 
-
-        return (
-          monthMatch &&
-          ownerMatch
-        );
-
+        return monthMatch && ownerMatch;
       }
     );
 
+  filtered.sort(function(a, b) {
+    let result = 0;
+
+    if (sortKey === "nominal") {
+      result = (Number(a.nominal) || 0) - (Number(b.nominal) || 0);
+    } else if (sortKey === "tanggal") {
+      result = String(a.tanggal || "").localeCompare(String(b.tanggal || ""));
+    } else {
+      result = String(a[sortKey] || "").localeCompare(
+        String(b[sortKey] || ""),
+        "id",
+        { sensitivity: "base", numeric: true }
+      );
+    }
+
+    return sortDirection === "asc" ? result : -result;
+  });
+
+  ["tanggal", "pemilik", "kategori", "nominal", "catatan"].forEach(function(key) {
+    const indicator = document.getElementById("sort-" + key);
+    if (indicator) {
+      indicator.textContent = key === sortKey
+        ? (sortDirection === "asc" ? "↑" : "↓")
+        : "↕";
+    }
+  });
 
   let total = 0;
   let aufar = 0;
@@ -1618,6 +1618,26 @@ async function deleteExpense(row) {
 
 }
 
+
+
+/* =========================
+   SORT TABEL
+========================= */
+
+document.querySelectorAll("[data-sort]").forEach(function(button) {
+  button.addEventListener("click", function() {
+    const key = button.dataset.sort;
+
+    if (sortKey === key) {
+      sortDirection = sortDirection === "asc" ? "desc" : "asc";
+    } else {
+      sortKey = key;
+      sortDirection = key === "tanggal" ? "desc" : "asc";
+    }
+
+    renderExpenses();
+  });
+});
 
 
 /* =========================
